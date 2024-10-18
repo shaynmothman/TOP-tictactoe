@@ -47,38 +47,71 @@ function createBoard() {
 }
 
 //Function for drawing game board
+function drawboard() {
+    return { board }
+}
+
 //Function for switching rounds
 function nextRound() {
     round++;
     drawboard();
+    return { round }
 }
 
 //Function for starting game
+function newGame() {
+    createBoard();
+    nextRound();
+    inputName.setAttribute('visibility', 'hidden');
+    buttonSave.setAttribute('visibility', 'hidden');
+    return { round }
+}
+document.querySelector('#btn-start').addEventListener('click', newGame);
+
 //Function for resetting game
-// function resetGame(event) {
-//     board = [];
-//     players[0].name = 'Player 1';
-//     players[1].name = 'Player 2';
-//     drawboard();
-// }
-// document.querySelector('#btn-reset').addEventListener('click', resetGame);
+function resetGame() {
+    board = [];
+    round = 0;
+    buttonStart.disabled = false;
+    buttonSave.disabled = false;
+    createBoard();
+    drawboard();
+}
+document.querySelector('#btn-reset').addEventListener('click', resetGame);
 
 //Function for updating player name
+function updateName(name, index) {
+    players[index].name = name;
+}
+
 //Function for tracking tile clicks
+function getPlayerTurn() {
+    var turn;
+
+    if (round != 0) {
+        if (round % 2) {
+            turn = players[0];
+        } else {
+            turn = players[1];
+        }
+    } else {
+        alert('Press the Start button to begin');
+    }
+
+    return turn;
+}
+
 function placeToken() {
     tiles.forEach((tile) => {
         tile.addEventListener('click', (event) => {
             var arrayTile = board[event.target.dataset.index];
 
-            if (round != 0) {
-                if (round % 2) {
-                    arrayTile.setMarker(players[1]);
-                } else {
-                    arrayTile.setMarker(players[0]);
-                }
+            if (arrayTile.marker.length == 0) {
+                arrayTile.setMarker(getPlayerTurn());
             } else {
-                alert('Press the Start button to begin.');
+                alert('Please select an empty space');
             }
         })
     })
+    nextRound();
 }
