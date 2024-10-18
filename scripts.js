@@ -20,10 +20,14 @@ const buttonSave = document.querySelector('#btn-save');
 const tiles = document.querySelectorAll('#gameboard > div');
 
 //Factory function for populating array of tile objects
-function createTiles() {
+function createTiles(row, column) {
     var marker = '';
+    var row = row;
+    var column = column;
 
     return {
+        row,
+        column,
         getMarker() {
             return { marker }
         },
@@ -40,7 +44,7 @@ function createBoard() {
 
     for (var i = 0; i < rows; i++) {
         for (var j = 0; j < columns; j++) {
-            const tile = createTiles();
+            const tile = createTiles(i, j);
             board.push(tile);
         }
     }
@@ -114,4 +118,9 @@ function placeToken() {
         })
     })
     nextRound();
+}
+
+//Check for wins
+function checkForWins() {
+    
 }
