@@ -1,4 +1,7 @@
 //Global variables 
+const rows = 3;
+const columns = 3;
+var won = false;
 var round = 0;
 var board = [];
 var winner;
@@ -34,15 +37,13 @@ function getMarker(row, column) {
  }
 
 
-function setMarker(row, column, player) { 
+function setMarker(row, column, playerMarker) { 
     var target = board.find((tile) => tile.row == row && tile.column == column);
-    target.marker = player.marker;
+    target.marker = playerMarker;
     return target.marker;
 }
 
 function createBoard() {
-    const rows = 3;
-    const columns = 3;
 
     for (var i = 0; i < rows; i++) {
         for (var j = 0; j < columns; j++) {
@@ -60,8 +61,8 @@ function drawboard() {
 //Function for switching rounds
 function nextRound() {
     round++;
+
     drawboard();
-    return round;
 }
 
 //Function for starting game
@@ -70,7 +71,6 @@ function newGame() {
     nextRound();
     inputName.setAttribute('visibility', 'hidden');
     buttonSave.setAttribute('visibility', 'hidden');
-    return round;
 }
 document.querySelector('#btn-start').addEventListener('click', newGame);
 
@@ -78,6 +78,7 @@ document.querySelector('#btn-start').addEventListener('click', newGame);
 function resetGame() {
     board = [];
     round = 0;
+    won = false;
     buttonStart.disabled = false;
     buttonSave.disabled = false;
     createBoard();
@@ -96,9 +97,9 @@ function getPlayerTurn() {
 
     if (round != 0) {
         if (round % 2) {
-            turn = players[0];
+            turn = players[0].marker;
         } else {
-            turn = players[1];
+            turn = players[1].marker;
         }
     } else {
         alert('Press the Start button to begin');
@@ -112,44 +113,61 @@ function placeToken() {
         tile.addEventListener('click', (event) => {
             var arrayTile = board[event.target.dataset.index];
 
-            if (arrayTile.marker.length == 0) {
-                arrayTile.setMarker(getPlayerTurn());
+            if (won = false) {
+                if (arrayTile.marker == undefined) {
+                    arrayTile.setMarker(getPlayerTurn());
+                } else {
+                    alert('Please select an empty space');
+                }
             } else {
-                alert('Please select an empty space');
+                //Do nothing
             }
         })
     })
-    nextRound();
+    drawboard();
+    checkForWins();
+    //Disable clicking
+}
+
+function displayWinner(playerMarker) {
+    if (playerMarker == players[0].marker) {
+        alert(`${players[0].name} is the winner!`);
+    } else if (playerMarker == players[1].marker) {
+        alert(`${players[1].name} is the winner!`);
+    }
 }
 
 //Check for wins
 function checkForWins() {
+    if (checkLinear()) {
+        won = true;
+        return checkLinear();
+    } else if (checkDiagonal()) {
+        won = true;
+        return checkDiagonal();
+    } else {
+        nextRound();
+    }
+}
 
-
-    //Check linear
-    
-    checkDiagonal();  
+function checkLinear() {
+    for (let i = 0; i < 3; i++) {
+        if (getMarker(i, 0) == getMarker(i, 1) && getMarker(i, 1) == getMarker(i, 2) && getMarker(i, 0) !== undefined) {
+            return getMarker(i, 0);
+        } else if (getMarker(0, i) == getMarker(1, i) && getMarker(1, i) == getMarker(2, i) && getMarker(0, i) !== undefined) {
+            return getMarker(0, i);
+        } else {
+            return false;
+        }
+    }
 }
 
 function checkDiagonal() {
     if (
-        getMarker(0, 0) == getMarker(1, 1) && getMarker(1, 1) == getMarker(2, 2)
-        || getMarker(0, 2) == getMarker(1, 1) && getMarker(1, 1) == getMarker(2, 0)
+        getMarker(0, 0) == getMarker(1, 1) && getMarker(1, 1) == getMarker(2, 2) && getMarker(0, 0) !== undefined
+        || getMarker(0, 2) == getMarker(1, 1) && getMarker(1, 1) == getMarker(2, 0) && getMarker(0, 2) !== undefined
     ) {
-        if (getMarker(1, 1) !== undefined) {
-            return getMarker(1, 1);
-        } else {
-            return false;
-        }
-    } else {
-        return false;
-    }
-}
-
-function filterMatches(item) {
-    if (item.marker !== '') {
-        return true;
-
+        return getMarker(1, 1);
     } else {
         return false;
     }
