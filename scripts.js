@@ -22,20 +22,19 @@ const tiles = document.querySelectorAll('#gameboard > div');
 //Factory function for populating array of tile objects
 function createTiles(row, column) {
     var marker = '';
-    var row = row;
-    var column = column;
 
     return {
         row,
         column,
-        getMarker() {
-            return { marker }
-        },
-        setMarker(player) {
-            marker = player.marker;
-            return { marker }
-        }
+        marker
     };
+}
+
+function getMarker(index) { return board[index].marker }
+
+function setMarker(index, player) { 
+    board[index].marker = player.marker;
+    return board[index].marker;
 }
 
 function createBoard() {
@@ -52,14 +51,14 @@ function createBoard() {
 
 //Function for drawing game board
 function drawboard() {
-    return { board }
+    return board;
 }
 
 //Function for switching rounds
 function nextRound() {
     round++;
     drawboard();
-    return { round }
+    return round;
 }
 
 //Function for starting game
@@ -68,7 +67,7 @@ function newGame() {
     nextRound();
     inputName.setAttribute('visibility', 'hidden');
     buttonSave.setAttribute('visibility', 'hidden');
-    return { round }
+    return round;
 }
 document.querySelector('#btn-start').addEventListener('click', newGame);
 
@@ -122,5 +121,14 @@ function placeToken() {
 
 //Check for wins
 function checkForWins() {
-    
+    return board.filter(filterMatches);
+}
+
+function filterMatches(item) {
+    if (item.marker !== '') {
+        return true;
+
+    } else {
+        return false;
+    }
 }
