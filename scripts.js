@@ -126,7 +126,6 @@ function placeToken() {
     })
     drawboard();
     checkForWins();
-    //Disable clicking
 }
 
 function displayWinner(playerMarker) {
