@@ -26,15 +26,18 @@ function createTiles(row, column) {
     return {
         row,
         column,
-        marker
     };
 }
 
-function getMarker(index) { return board[index].marker }
+function getMarker(row, column) { 
+    return board.find((tile) => tile.row == row && tile.column == column).marker;
+ }
 
-function setMarker(index, player) { 
-    board[index].marker = player.marker;
-    return board[index].marker;
+
+function setMarker(row, column, player) { 
+    var target = board.find((tile) => tile.row == row && tile.column == column);
+    target.marker = player.marker;
+    return target.marker;
 }
 
 function createBoard() {
