@@ -124,7 +124,26 @@ function placeToken() {
 
 //Check for wins
 function checkForWins() {
-    return board.filter(filterMatches);
+
+
+    //Check linear
+    
+    checkDiagonal();  
+}
+
+function checkDiagonal() {
+    if (
+        getMarker(0, 0) == getMarker(1, 1) && getMarker(1, 1) == getMarker(2, 2)
+        || getMarker(0, 2) == getMarker(1, 1) && getMarker(1, 1) == getMarker(2, 0)
+    ) {
+        if (getMarker(1, 1) !== undefined) {
+            return getMarker(1, 1);
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
 }
 
 function filterMatches(item) {
