@@ -15,9 +15,6 @@ function Game(targetDiv) {
         }
     ]
 
-    const buttonStart = document.querySelector('#btn-start');
-    const dialogPlayers = document.querySelector('#dialog-players');
-
     const createTiles = (row, column) => {
         var marker = '';
         return { row, column };
@@ -65,7 +62,7 @@ function Game(targetDiv) {
         createBoard();
         nextRound();
         document.getElementById('form-players').reset();
-        dialogPlayers.showModal();
+        document.querySelector('#dialog-players').showModal();
         document.querySelector('#btn-start').disabled = true;
     }
     document.querySelector('#btn-start').addEventListener('click', newGame);
