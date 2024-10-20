@@ -15,9 +15,7 @@ function Game(targetDiv) {
         }
     ]
 
-    const gameboard = document.querySelector(targetDiv);
     const buttonStart = document.querySelector('#btn-start');
-    const tiles = document.querySelectorAll('#gameboard > div');
     const dialogPlayers = document.querySelector('#dialog-players');
 
     const createTiles = (row, column) => {
@@ -44,9 +42,18 @@ function Game(targetDiv) {
         }
     }
 
-    //Function for drawing game board
-    function drawboard() {
-        return board;
+    const drawboard = () => {
+        const gameboard = document.querySelector(targetDiv);
+
+        while (gameboard.firstChild) { gameboard.removeChild(gameboard.lastChild); }
+
+        for (var i = 0; i < board.length; i++) {
+            const tile = document.createElement('div');
+            tile.classList.add('tile');
+            tile.setAttribute('data-index', i);
+            tile.textContent = board[i].marker;
+            gameboard.append(tile);
+        }
     }
 
     const nextRound = () => {
@@ -59,6 +66,7 @@ function Game(targetDiv) {
         nextRound();
         document.getElementById('form-players').reset();
         dialogPlayers.showModal();
+        document.querySelector('#btn-start').disabled = true;
     }
     document.querySelector('#btn-start').addEventListener('click', newGame);
 
@@ -66,15 +74,16 @@ function Game(targetDiv) {
         board = [];
         round = 0;
         won = false;
-        buttonStart.disabled = false;
+        document.querySelector('#btn-start').disabled = false;
+        document.querySelector('#btn-reset').disabled = true;
     }
     document.querySelector('#btn-reset').addEventListener('click', resetGame);
 
-    //Function for updating player info
-    const updateName = (name, marker, index) => {
+    const updateInfo = (name, marker, index) => {
         players[index].name = name;
         players[index].marker = marker;
     }
+    document.querySelector('#btn-save').addEventListener('click', updateInfo);
 
     const getPlayerTurn = () => {
         if (round != 0) {
@@ -88,25 +97,24 @@ function Game(targetDiv) {
         }
     }
 
-    const placeToken = () => {
-        tiles.forEach((tile) => {
-            tile.addEventListener('click', (event) => {
-                var arrayTile = board[event.target.dataset.index];
+    const tiles = document.querySelectorAll('#gameboard > div');
+    tiles.forEach((tile) => {
+        tile.addEventListener('click', (event) => {
+            var arrayTile = board[event.target.dataset.index];
 
-                if (won = false) {
-                    if (arrayTile.marker == undefined) {
-                        arrayTile.setMarker(getPlayerTurn());
-                    } else {
-                        alert('Please select an empty space');
-                    }
+            if (won = false) {
+                if (arrayTile.marker == undefined) {
+                    arrayTile.setMarker(getPlayerTurn());
+                    drawboard();
+                    checkForWins();
                 } else {
-                    //Do nothing
+                    alert('Please select an empty space');
                 }
-            })
+            } else {
+                //Do nothing
+            }
         })
-        drawboard();
-        checkForWins();
-    }
+    });
 
     const displayWinner = (playerMarker) => {
         if (playerMarker == players[0].marker) {
@@ -119,10 +127,10 @@ function Game(targetDiv) {
     const checkForWins = () => {
         if (checkLinear()) {
             won = true;
-            return checkLinear();
+            displayWinner(checkLinear());
         } else if (checkDiagonal()) {
             won = true;
-            return checkDiagonal();
+            displayWinner(checkDiagonal());
         } else {
             nextRound();
         }
